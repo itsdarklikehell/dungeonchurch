@@ -12,9 +12,9 @@ You can use the json files here to import these into Node-Red.
 * [node-red-contrib-batcher](https://flows.nodered.org/node/node-red-contrib-batcher) Debouncing & rate limiting.
 
 ### Ghost Authorization
-Get an auth cookie to access the Ghost API, then save it in the Node-Red flow context.
+Sign JWT tokens and add the Authorization header to your HTTP requests. Set your credentials in the sub-flow properties.
 
-<img src=/node-red-examples/ghost-auth-cookie.png>
+<img src=/node-red-examples/ghost-jwt-auth.png>
 
 ### Ghost Post to Discord
 Push Ghost posts to Discord. A webhook is configured in the Ghost settings to send posts to the HTTP receiver node in Node-Red, where it is reformatted as a Discord embed.

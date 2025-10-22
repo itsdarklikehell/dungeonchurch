@@ -1,0 +1,89 @@
+[
+    {
+        "id": "8bc7edd709515786",
+        "type": "subflow",
+        "name": "Ghost Auth",
+        "info": "",
+        "category": "",
+        "in": [
+            {
+                "x": 160,
+                "y": 200,
+                "wires": [
+                    {
+                        "id": "784e9540c26afc83"
+                    }
+                ]
+            }
+        ],
+        "out": [
+            {
+                "x": 800,
+                "y": 200,
+                "wires": [
+                    {
+                        "id": "2afe2db779264873",
+                        "port": 0
+                    }
+                ]
+            }
+        ],
+        "env": [
+            {
+                "name": "GHOST_KEY_ID",
+                "type": "str",
+                "value": "before:"
+            },
+            {
+                "name": "GHOST_KEY_SECRET",
+                "type": "str",
+                "value": ":after"
+            }
+        ],
+        "meta": {},
+        "color": "#ff2600"
+    },
+    {
+        "id": "784e9540c26afc83",
+        "type": "function",
+        "z": "8bc7edd709515786",
+        "name": "Sign Ghost JWT",
+        "func": "const id = env.get(\"GHOST_KEY_ID\")\nconst secret = env.get (\"GHOST_KEY_SECRET\")\n\nconst token = jwt.sign({}, Buffer.from(secret, 'hex'), {\n    keyid: id,\n    algorithm: 'HS256',\n    expiresIn: '5m',\n    audience: `/admin/`\n});\n\nmsg.token = token;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "jwt",
+                "module": "jsonwebtoken"
+            }
+        ],
+        "x": 320,
+        "y": 200,
+        "wires": [
+            [
+                "2afe2db779264873"
+            ]
+        ]
+    },
+    {
+        "id": "2afe2db779264873",
+        "type": "function",
+        "z": "8bc7edd709515786",
+        "name": "Add Token to Header",
+        "func": "// Create headers object if it doesn't exist\nif (!msg.headers) {\n    msg.headers = {};\n}\n// Add Ghost authorization header (JWT is in msg.output)\nmsg.headers.Authorization = \"Ghost \" + msg.token;\ndelete msg.token\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 200,
+        "wires": [
+            []
+        ]
+    }
+]
