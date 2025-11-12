@@ -1,5 +1,6 @@
 .DS_Store
 ssh-dc-oracle.key
 .gitignore
-foundryvtt/foundry-settings-export.json
+foundryvtt-12/foundry-settings-export.json
+foundryvtt-13/foundry-settings-export.json
 5etools-homebrew
