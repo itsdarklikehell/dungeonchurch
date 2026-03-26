@@ -12,7 +12,7 @@ services:
       - "81:81"
     volumes:
       - /home/ubuntu/nginx/data:/data
-      - /home/ubuntu/nginx/letsencrypt:/letsencrypt
+      - /home/ubuntu/nginx/letsencrypt:/etc/letsencrypt
     networks:
       - public-proxy # PUBLIC SERVICES MUST CONNECT TO THIS NETWORK
 
