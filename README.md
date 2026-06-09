@@ -4,10 +4,7 @@
         <img src=https://img.shields.io/github/last-commit/oakbrad/dungeonchurch?label=dungeonchurch&color=gray&labelColor=ff2600&logoColor=ffffff&logo=docker></a>
     <a href=https://github.com/oakbrad/dungeonchurch-pyora>
         <img src=https://img.shields.io/github/last-commit/oakbrad/dungeonchurch-pyora?label=dungeonchurch-pyora&color=gray&labelColor=ff2600&logo=dungeonsanddragons></a>
-    <a href=https://github.com/oakbrad/dungeonchurch-basilica>
-        <img src=https://img.shields.io/github/last-commit/oakbrad/dungeonchurch-basilica?label=dungeonchurch-basilica&color=gray&labelColor=ff2600&logo=ghost></a>
-    <a href=https://github.com/oakbrad/dungeonchurch-cogs>
-        <img src=https://img.shields.io/github/last-commit/oakbrad/dungeonchurch-cogs?label=dungeonchurch-cogs&color=gray&labelColor=ff2600&logoColor=ffffff&logo=discord></a>
+
 </p>
 
 # Dungeon Church
@@ -19,13 +16,11 @@ Interested in playing with us? <b><a href=https://dungeon.church/join-us>Join us
 - [FoundryVTT](https://foundryvtt.com/) - Virtual table platform
   - [Plutonium](https://5e.tools/plutonium.html) - Import from 5eTools to FoundryVTT
   - [DDB Proxy](https://github.com/MrPrimate/ddb-proxy) - DDB integration
-- [Ghost](https://ghost.org/) - public website & email newsletter *(see: [dungeonchurch-basilica](https://github.com/oakbrad/dungeonchurch-basilica)*)
+- [Ghost](https://ghost.org/) - public website & email newsletter
 - [Outline](https://www.getoutline.com/) - lore wiki for our homebrew world
   - [Drawio](https://github.com/jgraph/docker-drawio) - diagramming integration
 - [5eTools](https://github.com/Jafner/5etools-docker) - D&D content & tools *(see: [dungeonchurch-pyora](https://github.com/oakbrad/dungeonchurch-pyora))*
-- Discord
-  - [Red Bot](https://github.com/Cog-Creators/Red-DiscordBot) - extensible Discord bot *(see: [dungeonchurch-cogs](https://github.com/oakbrad/dungeonchurch-cogs))*
-  - *Not Hosted:* [Sesh.fyi](https://sesh.fyi/) & [Kenku.fm](https://kenku.fm)
+- [Red Bot](https://github.com/Cog-Creators/Red-DiscordBot) - extensible Discord bot
 - [Node-Red](https://nodered.org/) - low code API magic to connect our services
 - [Homebrewery](https://github.com/naturalcrit/homebrewery) - Convert Markdown to nice pages for print
 - [Restreamer](github.com/datarhei/restreamer) - streaming utility
