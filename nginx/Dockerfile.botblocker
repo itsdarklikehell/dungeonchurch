@@ -1,0 +1,106 @@
+# syntax=docker/dockerfile:1
+# Dockerfile.botblocker
+#
+# Extends jc21/nginx-proxy-manager with nginx-ultimate-bad-bot-blocker:
+#   https://github.com/mitchellkrogza/nginx-ultimate-bad-bot-blocker
+#
+# Build:
+#   docker build -f Dockerfile.botblocker -t npm-with-botblocker .
+#
+# Run (same volumes / ports as standard NPM):
+#   docker run -d \
+#     -p 80:80 -p 81:81 -p 443:443 \
+#     -v ./data:/data \
+#     -v ./letsencrypt:/etc/letsencrypt \
+#     npm-with-botblocker
+#
+# How the integration works (no source files are modified):
+#
+#   1. BUILD TIME  install-ngxblocker downloads the blocklist files:
+#        /etc/nginx/conf.d/botblocker-nginx-settings.conf  (http-block rate limits)
+#        /etc/nginx/conf.d/globalblacklist.conf             (http-block map directives)
+#        /etc/nginx/bots.d/blockbots.conf                   (per-server block rule)
+#        /etc/nginx/bots.d/ddos-protection.conf             (per-server rate limiting)
+#        /etc/nginx/bots.d/whitelist-*.conf                 (customisable allowlists)
+#        /etc/nginx/bots.d/custom-bad-*.conf                (customisable denylists)
+#
+#   2. START TIME  the 15-botblocker.sh prepare script appends includes to NPM's
+#      custom-conf stubs (idempotent; safe to restart):
+#        /data/nginx/custom/http_top.conf        ÔåÆ loaded inside the http { } block
+#        /data/nginx/custom/server_proxy.conf    ÔåÆ loaded inside every proxy-host server block
+#        /data/nginx/custom/server_redirect.conf ÔåÆ loaded inside every redirect-host server block
+#        /data/nginx/custom/server_dead.conf     ÔåÆ loaded inside every dead-host server block
+#
+#   3. RUNTIME  the ngxblocker-update s6 service refreshes the blocklist every 24 h
+#      (first refresh occurs 1 h after container start).
+#
+# Customisation:
+#   Edit these files on the host (persisted in the /data volume) to whitelist
+#   IPs or domains, or add extra bad user-agents / referrers:
+#     /etc/nginx/bots.d/whitelist-ips.conf
+#     /etc/nginx/bots.d/whitelist-domains.conf
+#     /etc/nginx/bots.d/custom-bad-user-agents.conf
+#     /etc/nginx/bots.d/custom-bad-referrers.conf
+#   (These files live in the image; mount them as volumes to persist changes
+#    across image rebuilds, e.g. -v ./bots.d:/etc/nginx/bots.d)
+
+FROM jc21/nginx-proxy-manager:latest
+
+# wget may already be present; install it if not.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends wget \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Download and execute the official install script.
+# This creates /etc/nginx/conf.d/botblocker-nginx-settings.conf,
+# /etc/nginx/conf.d/globalblacklist.conf, and /etc/nginx/bots.d/*.
+# The setup-ngxblocker step (which would patch nginx.conf directly) is
+# intentionally skipped ÔÇö NPM's custom-conf hooks handle that instead.
+RUN wget -q \
+      https://raw.githubusercontent.com/mitchellkrogza/nginx-ultimate-bad-bot-blocker/master/install-ngxblocker \
+      -O /usr/local/sbin/install-ngxblocker \
+    && chmod +x /usr/local/sbin/install-ngxblocker \
+    && /usr/local/sbin/install-ngxblocker -x \
+    # NPM already sets server_names_hash_* and variables_hash_* in nginx.conf /
+    # its own conf.d files; comment them out to avoid duplicate-directive errors.
+    && sed -i -E 's/^(server_names_hash_|variables_hash_)/#\1/' \
+         /etc/nginx/conf.d/botblocker-nginx-settings.conf
+
+# Inject bot blocker into the fallback default server block (port 80) so
+# bad bots are blocked even before any proxy host is configured.
+RUN sed -i \
+    '/include conf.d\/include\/block-exploits.conf;/a\\tinclude /etc/nginx/bots.d/ddos.conf;\n\tinclude /etc/nginx/bots.d/blockbots.conf;' \
+    /etc/nginx/conf.d/default.conf
+
+# ---------------------------------------------------------------------------
+# s6 prepare-phase hook: inject the blocker into NPM's nginx config stubs.
+# The script is sourced (not exec'd) by 00-all.sh, so it shares the bash
+# environment including log_info / log_fatal helpers from common.sh.
+# ---------------------------------------------------------------------------
+COPY ./15-botblocker.sh \
+     /etc/s6-overlay/s6-rc.d/prepare/15-botblocker.sh
+RUN sed -i 's/\r//' /etc/s6-overlay/s6-rc.d/prepare/15-botblocker.sh \
+    && chmod +x /etc/s6-overlay/s6-rc.d/prepare/15-botblocker.sh
+
+# Insert the source call just before the banner line so it runs after all
+# paths, ownership, and dynamic-config steps have completed.
+RUN sed -i \
+    's|\. /etc/s6-overlay/s6-rc\.d/prepare/90-banner\.sh|. /etc/s6-overlay/s6-rc.d/prepare/15-botblocker.sh\n. /etc/s6-overlay/s6-rc.d/prepare/90-banner.sh|' \
+    /etc/s6-overlay/s6-rc.d/prepare/00-all.sh
+
+# ---------------------------------------------------------------------------
+# s6 longrun service: refresh the blocklist daily.
+# ---------------------------------------------------------------------------
+RUN mkdir -p /etc/s6-overlay/s6-rc.d/ngxblocker-update/dependencies.d
+COPY ./ngxblocker-update-run.sh \
+     /etc/s6-overlay/s6-rc.d/ngxblocker-update/run
+RUN sed -i 's/\r//' /etc/s6-overlay/s6-rc.d/ngxblocker-update/run \
+    && echo "longrun" > /etc/s6-overlay/s6-rc.d/ngxblocker-update/type \
+    && chmod +x /etc/s6-overlay/s6-rc.d/ngxblocker-update/run \
+    && touch /etc/s6-overlay/s6-rc.d/ngxblocker-update/dependencies.d/prepare \
+    && touch /etc/s6-overlay/s6-rc.d/user/contents.d/ngxblocker-update
+
+LABEL org.label-schema.name="nginx-proxy-manager-bot-blocker" \
+    org.label-schema.description="NPM extended with nginx-ultimate-bad-bot-blocker" \
+    org.label-schema.url="https://github.com/mitchellkrogza/nginx-ultimate-bad-bot-blocker"

@@ -3,7 +3,13 @@ services:
   # NGINX PROXY
   # https://github.com/NginxProxyManager/nginx-proxy-manager
   nginx:
-    image: jc21/nginx-proxy-manager:latest
+    #image: jc21/nginx-proxy-manager:latest
+    # build with bot-blocker:
+    # docker compose up -d --build nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile.botblocker
+    image: npm-with-botblocker:latest
     restart: unless-stopped
     container_name: nginx
     ports:
