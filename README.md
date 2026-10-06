@@ -1,50 +1,38 @@
-<p align="center">
-    <img width="650" src="logo-chrome.png"><br>
-    <a href=https://github.com/oakbrad/dungeonchurch>
-        <img src=https://img.shields.io/github/last-commit/oakbrad/dungeonchurch?label=dungeonchurch&color=gray&labelColor=ff2600&logoColor=ffffff&logo=docker></a>
-    <a href=https://github.com/oakbrad/dungeonchurch-pyora>
-        <img src=https://img.shields.io/github/last-commit/oakbrad/dungeonchurch-pyora?label=dungeonchurch-pyora&color=gray&labelColor=ff2600&logo=dungeonsanddragons></a>
-
-</p>
-
 # Dungeon Church
-Dungeons & Dragons group infrastructure. <a href=https://www.dungeon.church/dungeon-church-software-stack>More info here</a>.
 
-Interested in playing with us? <b><a href=https://dungeon.church/join-us>Join us</a></b>.
+Dungeons & Dragons group infrastructure. A complete software stack for running a D&D campaign with FoundryVTT, Discord integration, and more.
 
-# Software
+## Software Stack
+
 - [FoundryVTT](https://foundryvtt.com/) - Virtual table platform
   - [Plutonium](https://5e.tools/plutonium.html) - Import from 5eTools to FoundryVTT
   - [DDB Proxy](https://github.com/MrPrimate/ddb-proxy) - DDB integration
-- [Ghost](https://ghost.org/) - public website & email newsletter
-- [Outline](https://www.getoutline.com/) - lore wiki for our homebrew world
-  - [Drawio](https://github.com/jgraph/docker-drawio) - diagramming integration
-- [5eTools](https://github.com/Jafner/5etools-docker) - D&D content & tools *(see: [dungeonchurch-pyora](https://github.com/oakbrad/dungeonchurch-pyora))*
-- [Red Bot](https://github.com/Cog-Creators/Red-DiscordBot) - extensible Discord bot
-- [Node-Red](https://nodered.org/) - low code API magic to connect our services
+- [Ghost](https://ghost.org/) - Public website & email newsletter
+- [Outline](https://www.getoutline.com/) - Lore wiki for homebrew world
+  - [Drawio](https://github.com/jgraph/docker-drawio) - Diagramming integration
+- [5eTools](https://github.com/Jafner/5etools-docker) - D&D content & tools
+- [Red Bot](https://github.com/Cog-Creators/Red-DiscordBot) - Extensible Discord bot
+- [Node-Red](https://nodered.org/) - Low code API magic to connect services
 - [Homebrewery](https://github.com/naturalcrit/homebrewery) - Convert Markdown to nice pages for print
-- [Restreamer](github.com/datarhei/restreamer) - streaming utility
-- [Quake 3 Arena](https://ioquake3.org/) - why not
+- [Restreamer](https://github.com/datarhei/restreamer) - Streaming utility
+- [Quake 3 Arena](https://ioquake3.org/) - Why not
 
 ## Docker Compose
-The config necessary to run all this is detailed in the <a href=/docker-compose.yaml>docker-compose.yaml</a>
+
+The config necessary to run all this is detailed in the `docker-compose.yaml` file.
+
+```bash
+docker-compose up -d
+```
 
 ## FoundryVTT
-Details of our [FoundryVTT v13 setup](/foundryvtt-13) or older [v12](/foundryvtt-12/).
+
+Details of the FoundryVTT v13 setup can be found in `foundryvtt-13/` or older v12 in `foundryvtt-12/`.
 
 ## Node-Red Examples
-<a href=/node-red-examples/README.md>Example flows</a>
 
-# Follow Elsewhere
-<p align="left">
-    <a href=https://www.dungeon.church>
-        <img src=https://img.shields.io/badge/dungeon.church-ff2600?logo=ghost&logoColor=ffffff></a>
-    <a href=https://bsky.app/profile/dungeon.church>
-        <img src=https://img.shields.io/badge/bluesky-ff2600?logo=bluesky&logoColor=ffffff></a>
-    <a href=https://twitch.tv/dungeonchurch>
-        <img src=https://img.shields.io/twitch/status/dungeonchurch?style=flat&logo=twitch&logoColor=ffffff&labelColor=ff2600&color=gray></a>
-    <a href=https://youtube.com/@DungeonChurch>
-        <img src=https://img.shields.io/youtube/channel/subscribers/UCMaCjbcyIqyQ_ykH7hIpQiA?style=flat&label=youtube&logo=youtube&labelColor=ff2600&color=gray></a>
-    <a href=https://www.dungeon.church/#/portal/support>
-        <img src=https://img.shields.io/badge/support-brightgreen?logo=cashapp&logoColor=ffffff></a>
-</p>
+See `node-red-examples/` for example flows.
+
+## License
+
+MIT
